@@ -62,7 +62,7 @@ def get_parameters():
         help="l2 regularization parameter (for Least Squares)",
     )
     parser.add_argument(
-        "-val", default=False, type=bool, help="start validation after training"
+        "-test", default=False, type=bool, help="start validation after training"
     )
     parser.add_argument(
         "-use_custom_reg", default=True, type=bool, help="use custom regularisation"
@@ -87,12 +87,14 @@ if __name__ == "__main__":
     for arg in vars(args):
         print("{}: {}".format(arg, getattr(args, arg)))
     dataset = Dataset(args.dataset, args.cons_mask, args.mask_prob)
-    outKG_trainer = OutKGTrainer(dataset, args)
 
-    print("~~~~ Training ~~~~")
-    outKG_trainer.train()
+    if not args.test: # Train
+        outKG_trainer = OutKGTrainer(dataset, args)
 
-    if args.val or True:
+        print("~~~~ Training ~~~~")
+        outKG_trainer.train()
+
+    if args.test: # Test
         with torch.no_grad():
             print("~~~~ Select best epoch on validation set ~~~~")
             epochs2test = [
@@ -149,29 +151,29 @@ if __name__ == "__main__":
                 print("\tMR : ", valid_performance[4])
                 print("\tMRR : ", valid_performance[5])
 
-            print("~~~~ Testing on the best epoch ~~~~")
-            best_model_path = (
-                    "logs/"
-                    + args.model_name
-                    + "/"
-                    + args.emb_method
-                    + "/"
-                    + args.dataset
-                    + "/"
-                    + best_epoch
-                    + "_"
-                    + str(args.lr)
-                    + "_"
-                    + str(args.reg_lambda)
-                    + "_"
-                    + str(args.neg_ratio)
-                    + "_"
-                    + str(args.emb_dim)
-                    + ".chkpnt"
-            )
-            outKG_tester = OutKGTester(dataset)
-            start = time.time()
-            outKG_tester.test(best_model_path, "test")
-            print("Inference time: ", time.time() - start)
+            # print("~~~~ Testing on the best epoch ~~~~")
+            # best_model_path = (
+            #         "logs/"
+            #         + args.model_name
+            #         + "/"
+            #         + args.emb_method
+            #         + "/"
+            #         + args.dataset
+            #         + "/"
+            #         + best_epoch
+            #         + "_"
+            #         + str(args.lr)
+            #         + "_"
+            #         + str(args.reg_lambda)
+            #         + "_"
+            #         + str(args.neg_ratio)
+            #         + "_"
+            #         + str(args.emb_dim)
+            #         + ".chkpnt"
+            # )
+            # outKG_tester = OutKGTester(dataset)
+            # start = time.time()
+            # outKG_tester.test(best_model_path, "test")
+            # print("Inference time: ", time.time() - start)
 
         print("Done :) ")

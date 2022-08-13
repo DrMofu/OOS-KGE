@@ -27,10 +27,10 @@ class Dataset:
         self.init_num_ent = self.num_ent()
         self.adj_list, self.ent_freq, self.rel_freq = self.dataset_stat(self.train_data)
         self.max_degree = max(map(len, self.adj_list))
-        self.val_test_data = {
-            "valid": self.read_json(self.data_path + "valid.json"),
-            "test": self.read_json(self.data_path + "test.json"),
-        }
+        # self.val_test_data = { # only used in tester.py
+        #     "valid": self.read_json(self.data_path + "valid.json"),
+        #     "test": self.read_json(self.data_path + "test.json"),
+        # }
         self.batch_index = 0
         self.cons_masking = cons_masking
         self.mask_prob = mask_prob

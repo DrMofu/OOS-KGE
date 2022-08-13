@@ -74,7 +74,7 @@ class OutKGTrainer:
                 )
                 last_batch = self.dataset.was_last_batch()
                 scores, predicted_emb = self.model(triples, new_ent_mask)
-                predict_loss = torch.sum(self.predict_loss(-l * scores))
+                predict_loss = torch.sum(self.predict_loss(-l * scores)) # positive l=1, negative l=-1
                 if self.args.use_custom_reg:
                     if num_iters % iters_per_update == 0 or last_batch == True:
                         l2_loss = (

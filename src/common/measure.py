@@ -11,6 +11,8 @@ class Measure:
         self.hit1 = 0.0
         self.hit3 = 0.0
         self.hit10 = 0.0
+        self.hit50 = 0.0
+        self.hit100 = 0.0
         self.mrr = 0.0
         self.mr = 0.0
         self.num_facts = 0.0
@@ -22,6 +24,10 @@ class Measure:
             self.hit3 += 1.0
         if rank <= 10:
             self.hit10 += 1.0
+        if rank <= 50:
+            self.hit50 += 1.0
+        if rank <= 100:
+            self.hit100 += 1.0
         self.mr += rank
         self.mrr += 1.0 / rank
         self.num_facts += 1.0
@@ -40,6 +46,8 @@ class Measure:
         print("\tHit@1 =", self.hit1)
         print("\tHit@3 =", self.hit3)
         print("\tHit@10 =", self.hit10)
+        print("\tHit@50 =", self.hit50)
+        print("\tHit@100 =", self.hit100)
         print("\tMR =", self.mr)
         print("\tMRR =", self.mrr)
         print("")

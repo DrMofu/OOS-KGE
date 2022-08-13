@@ -23,7 +23,7 @@ class OutKGTester:
         self.model.eval()
         for i, new_ent in enumerate(self.dataset.val_test_data[valid_or_test].keys()):
             self.new_node_init = None
-            ent_triples = self.get_ent_triples(new_ent, valid_or_test)
+            ent_triples = self.get_ent_triples(new_ent, valid_or_test) # all test triples for new_ent
             for j in range(len(ent_triples)):
                 obs_triples = np.delete(ent_triples, [j], axis=0)
                 target_triple = ent_triples[j]
@@ -36,7 +36,7 @@ class OutKGTester:
 
     def predict(self, target_triple, new_ent, obs_triples):
         head_or_tail = "tail" if target_triple[0] == new_ent else "head"
-        queries_ent, rel_id = self.create_queries(
+        queries_ent, rel_id = self.create_queries( # queries_ent, first one is positive, others are negative samples
             target_triple, head_or_tail, obs_triples
         )
         rel_emb = self.model.get_rel_embs(
@@ -58,8 +58,9 @@ class OutKGTester:
             return obs_triples[idx, 2]
 
     def create_queries(self, target_triple, head_or_tail, obs_triples):
+        # TODO need to change to 1000 negative
         head_id, rel_id, tail_id = target_triple
-        ent_list = list(range(self.dataset.init_num_ent))
+        ent_list = list(range(self.dataset.init_num_ent)) # candidates
         filtered_ent_list = self.filter_entities(
             obs_triples, rel_id, head_or_tail
         ).tolist()
@@ -84,7 +85,7 @@ class OutKGTester:
         return valid_ent.union(test_ent)
 
     def get_ent_triples(self, ent, valid_or_test):
-        triples = np.asarray(self.dataset.val_test_data[valid_or_test][ent])
+        triples = np.asarray(self.dataset.val_test_data[valid_or_test][ent]) # all test triples for ent
         h = np.where(triples[:, 0] == ent)
         triples[h, 0] = self.dataset.init_num_ent
         t = np.where(triples[:, 2] == ent)
